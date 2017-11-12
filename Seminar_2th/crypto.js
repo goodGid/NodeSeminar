@@ -25,6 +25,14 @@ crypto.randomBytes(32, function(err, buffer){
 			if(err){
 				console.log(err);
 			} else{
+				console.log(" === buffer value === ")
+				console.log(buffer);
+				console.log();
+
+				console.log(" === buffer.toString value === ")
+				console.log(buffer.toString('base64'));
+				console.log();
+
 				console.log(" === hashed value === ")
 				console.log(hashed);
 				console.log();
