@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({
   storage: multer.diskStorage({
-    destination: './saved',
+    destination: './saved', // 기본 '.'의 위치가 Express Directory이다.
     filename: function(req, file, cb) {
       cb(null, file.originalname);
     }

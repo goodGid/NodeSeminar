@@ -16,6 +16,14 @@ const upload = multer({
     })
 });
 
+/*
+upload의 Method
+
+array : 배열 형식
+field : 배열을 여러개
+any : Combine [ single array field ]
+*/
+
 router.post('/',upload.array('image',2), function(req, res){
   res.status(201).send({
     msg : "successful save image file!",
