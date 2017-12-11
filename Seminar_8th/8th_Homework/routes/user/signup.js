@@ -1,22 +1,29 @@
 /*
  Default module
-*/ 
+*/
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
+const crypto = require('crypto-promise');
 const async = require('async');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 /*
+ Router.use
+*/
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: false }));
+
+/*
  Custom module
 */
-const pool = require('../../config/dbPool');
-
+const hash = require('../module/hash.js');
+const jwt = require('../module/jwt.js');
+const db = require('../module/pool.js');
 
 
 /*
- Variable declaration 
+ Variable declaration
 */
 
 /*
@@ -26,77 +33,37 @@ const pool = require('../../config/dbPool');
 /*
  Method : Get
 */
-        
 
 /*
  Method : Post
 */
-router.post('/', function(req, res)
-{
-    var name = req.body.u_name;
+router.post('/', async(req, res, next) => {
+    var id = req.body.u_id;
     var pwd = req.body.u_pwd;
-
-    let taskArray = [
-        function(callback) {
-        crypto.pbkdf2(pwd, saltValue, 100000, 64, 'sha512', function(err, hashed) {
-            if (err) callback(err, null);
-            else callback(null, hashed.toString('base64'));
-          });
-        },
-        function(afterHashing, callback) {
-            pwd = afterHashing.toString('base64');
-            pool.getConnection((err, connection) => {
-                if(err) callback(err, null);
-                else callback(null, connection);
-              });
-        },
-        function(connection, callback){
-            var firstQuery = "select * from users where u_name = ?";
-            connection.query(firstQuery, name, function(err, rows) {
-                console.log("rows.length : " + rows.length);
-                if(err) callback(err, null);
-                else callback(null, rows.length,connection);
-            });
-        },
-        function(name_chk, connection , callback){
-            if(name_chk != 0){
-                res.status(200).send({
-                    stat : "Name already exist !",
-                });
-                connection.release();
-                callback(null, "Name already exist");
-            }
-            else{
-                var secondQuery = 
-                `
-                insert into users (u_name, u_pwd) 
-                values(?,?)
-                `;
-
-                connection.query(secondQuery, [name,pwd], function(err, rows) {
-                    if(err) {
-                        callback(err);
-                    }
-                    else {   
-                        res.status(200).send({
-                            stat : "success",
-                        });
-                        connection.release();  // 반드시 해제해야 합니다.
-                        callback(null, "Successful Register");
-                    }
-                });
-                }
-            }
-      ];
-
-      async.waterfall(taskArray, function(err, result) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(result);
-        }
-      });
-    });
-
+    var nickname = req.body.u_nickname;
+    const hashedValue = 
+await crypto.hash('sha512')(pwd);
+    let selectQuery =
+    `
+        select * from users
+        where id = ?
+    `;
+    let checkID = await db.queryParamCnt_1(selectQuery,id);
+    if(checkID.length == 0){
+        let insertQuery =
+        `
+            insert into users (id,pwd,hashed,nickname)
+            values (?,?,?,?)
+        `;
+        let insertResult = await db.queryParamCnt_4(insertQuery,id,pwd,hashedValue.toString('base64'),nickname);
+        res.status(200).send({
+            message : " Success Register "
+        });
+    } else {
+        res.status(401).send({
+            message : " ID Already Exist "
+        });
+    }
+});
 
 module.exports = router;

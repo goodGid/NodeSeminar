@@ -18,8 +18,8 @@ jwt.sign(payload, secret, option, (err, token) => {
 });
 
 
-/*
-let token2 = '';
+
+let token2 = 'eyJ1c2VyX2lkIjoiMSIsInVzZXJfbmlja25hbWUiOlt7Im5pY2tuYW1lIjoiMyJ9XSwiaWF0IjoxNTEyOTY3NzM5LCJleHAiOjE1MTU1NTk3Mzl9.-WW-rJw68PGBa_cNU7d5qGROe5ociSc3IIXQ3J7SSp0';
 jwt.verify(token2, secret, (err, data) => {
   if (err){
   	if(err.message === 'jwt expired') console.log('expired token');
@@ -31,7 +31,7 @@ jwt.verify(token2, secret, (err, data) => {
     console.log(data.key2);
   }
 });
-*/
+
 
 
 router.get('/:string', function(req, res){
