@@ -41,8 +41,7 @@ router.post('/', async(req, res, next) => {
     var id = req.body.u_id;
     var pwd = req.body.u_pwd;
     var nickname = req.body.u_nickname;
-    const hashedValue = 
-await crypto.hash('sha512')(pwd);
+    const hashedValue = await crypto.hash('sha512')(pwd);
     let selectQuery =
     `
         select * from users
