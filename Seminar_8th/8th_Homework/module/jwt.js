@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 /*
  Custom module
 */
-const secretKey = require('../../config/secretKey').key;
+const secretKey = require('../config/secretKey').key;
 
 
 /*

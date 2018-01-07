@@ -17,9 +17,9 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /*
  Custom module
 */
-const hash = require('../module/hash.js');
-const jwt = require('../module/jwt.js');
-const db = require('../module/pool.js');
+const hash = require('../../module/hash.js');
+const jwt = require('../../module/jwt.js');
+const db = require('../../module/pool.js');
 
 /*
  Variable declaration 
@@ -56,7 +56,7 @@ router.post('/', async(req, res, next) => {
         where id = ? and hashed = ?
     `;
     // Returns the User's Nickname
-    let result = await db.queryParamCnt_2(selectQuery,id,hashedValue.toString('base64')); 
+    let result = await db.queryParamCnt_Arr(selectQuery,[id,hashedValue.toString('base64')]); 
     if( result.length == 0){
         res.status(404).send({
             stat: " Login Fail "

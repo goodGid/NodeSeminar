@@ -17,9 +17,9 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /*
  Custom module
 */
-const hash = require('../module/hash.js');
-const jwt = require('../module/jwt.js');
-const db = require('../module/pool.js');
+const hash = require('../../module/hash.js');
+const jwt = require('../../module/jwt.js');
+const db = require('../../module/pool.js');
 
 
 /*
@@ -42,19 +42,23 @@ router.post('/', async(req, res, next) => {
     var pwd = req.body.u_pwd;
     var nickname = req.body.u_nickname;
     const hashedValue = await crypto.hash('sha512')(pwd);
+
+    console.log('id : ' + id);
+
+
     let selectQuery =
     `
         select * from users
         where id = ?
     `;
-    let checkID = await db.queryParamCnt_1(selectQuery,id);
+    let checkID = await db.queryParamCnt_Arr(selectQuery,id);
     if(checkID.length == 0){
         let insertQuery =
         `
             insert into users (id,pwd,hashed,nickname)
             values (?,?,?,?)
         `;
-        let insertResult = await db.queryParamCnt_4(insertQuery,id,pwd,hashedValue.toString('base64'),nickname);
+        let insertResult = await db.queryParamCnt_Arr(insertQuery,[id,pwd,hashedValue.toString('base64'),nickname]);
         res.status(200).send({
             message : " Success Register "
         });

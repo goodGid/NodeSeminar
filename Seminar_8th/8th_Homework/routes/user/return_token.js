@@ -17,9 +17,9 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /*
  Custom module
 */
-const hash = require('../module/hash.js');
-const jwt = require('../module/jwt.js');
-const db = require('../module/pool.js');
+const hash = require('../../module/hash.js');
+const jwt = require('../../module/jwt.js');
+const db = require('../../module/pool.js');
 const secretKey = require('../../config/secretKey').key;
 
 /*
@@ -35,14 +35,14 @@ const secretKey = require('../../config/secretKey').key;
 */
 router.get('/', async(req, res, next) => {
     const chkToken = jwt.verify(req.headers.authorization);
-    console.log('result : '+ chkToken);
+    
     //토큰 검증이 성공할 경우
     if(chkToken != -1) {
         res.status(200).send({
             message : "Access Success",
             token :{
                 user_id : chkToken.user_id,
-                user_nickname : chkToken.user_nickname
+                user_nickname : chkToken.user_nickname,
             }
         });
     }
